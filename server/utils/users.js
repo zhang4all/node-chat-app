@@ -39,6 +39,10 @@ class Users {
 		return selectedUser[0];
 	}
 
+	getUserRoom() {
+		return this.users[0].room;
+	}
+
 	getUserList (room) {
 		var users = this.users.filter((user) => {
 			return user.room === room;

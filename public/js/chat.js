@@ -19,6 +19,12 @@ function scrollToBottom () {
 socket.on('connect', function () {
 	var params = jQuery.deparam(window.location.search);
 
+	
+	var room = params.room;
+	// add chat room name here
+	jQuery("h3").text(`Chat room: ${room}`);
+	jQuery("title").text(`Chat room: ${room}`);
+
 	socket.emit('join', params, function (err) {
 		if (err) {
 			alert(err);
@@ -35,6 +41,7 @@ socket.on('disconnect', function () {
 	console.log('Disconnected from server');
 });
 
+// listens for new users to be added and adds to html
 socket.on('updateUserList', function (users) {
 	var ol = jQuery('<ol></ol>');
 
@@ -43,10 +50,11 @@ socket.on('updateUserList', function (users) {
 	});
 
 	jQuery('#users').html(ol);
+
 	console.log('Users list', users);
 });
 
-// this listens for data from server and adds to the html
+// this listens for data from server and adds the new message to the html
 socket.on('newMessage', function(message) {
 	var formattedTime = moment(message.createdAt).format('h:mm a');
 	var template = jQuery('#message-template').html();
@@ -60,6 +68,8 @@ socket.on('newMessage', function(message) {
 	scrollToBottom();
 });
 
+
+// listens for new location messages from the server and adds the location to the html
 socket.on('newLocationMessage', function (message) {
 	var formattedTime = moment(message.createdAt).format('h:mm a');
 
@@ -75,7 +85,7 @@ socket.on('newLocationMessage', function (message) {
 });
 
 
-
+// listens for the send button to be clicked and then emits the new message that is typed to the server
 jQuery('#message-form').on('submit', function (e) {
 	e.preventDefault();
 
@@ -88,6 +98,7 @@ jQuery('#message-form').on('submit', function (e) {
 	});
 });
 
+// emits the location to the server
 var locationButton = jQuery('#send-location');
 locationButton.on('click', function () {
 	if (!navigator.geolocation) {
